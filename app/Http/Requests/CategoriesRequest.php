@@ -11,7 +11,7 @@ class CategoriesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class CategoriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'CategoryName'=>'required'
+            'CategoryName'=>'required',
         ];
     }
 }

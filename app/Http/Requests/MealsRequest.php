@@ -22,15 +22,15 @@ class MealsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'MealName' => 'required',
-            'Description' =>'required',
+            'MealName' => 'required|string|max:255',
+            'Description' =>'required|string|max:255',
             'Price'=>'required|numeric',
             'Quantity' => 'required|numeric',
-            'Ingredients'=>'required',
-            'PreparationTime'=>'required',
-            'MealImage'=>'required|image',
-            'CategoryId'=>'required',
-            'CookId'=>'required'
+            'Ingredients'=>'required|string',
+            'PreparationTime'=>'required|numeric',
+            'MealImage'=>'required',
+            'Category_Id'=>'required',
+            'Cook_Id'=>''
         ];
     }
 }

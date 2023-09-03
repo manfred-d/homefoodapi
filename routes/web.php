@@ -14,11 +14,6 @@ use App\Http\Controllers\MealsController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/home', function () {
     return view('welcome');
 });
-// Route::resource('meals', MealsController::class);
-Route::get('/meals',[MealsController::class,'index']);
-Route::get('/meals/{id}',[MealsController::class,'getMeal']);
-Route::post('/meals',[MealsController::class,'store'])->name('meal.create');
-// Route::get('/meals',);

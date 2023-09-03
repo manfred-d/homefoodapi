@@ -19,8 +19,8 @@ class Meals extends Model
         'Ingredients',
         'PreparationTime',
         'MealImage',
-        'CategoryId',
-        'CookId'
+        'Category_Id',
+        'Cook_Id'
 
 ];
 
