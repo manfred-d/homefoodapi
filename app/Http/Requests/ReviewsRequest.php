@@ -11,7 +11,7 @@ class ReviewsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class ReviewsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'User_Id'=>'required',
+            'Cook_Id'=>'required',
+            'Comment'=>'required|string',
+            'Rating'=>'required',
         ];
     }
 }

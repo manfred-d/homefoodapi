@@ -30,7 +30,7 @@ class MealsRequest extends FormRequest
             'PreparationTime'=>'required|numeric',
             'MealImage'=>'required',
             'Category_Id'=>'required',
-            'Cook_Id'=>''
+            'Cook_Id'=>'required'
         ];
     }
 }

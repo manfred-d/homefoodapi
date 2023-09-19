@@ -2,8 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChefsController;
 use App\Http\Controllers\MealsController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\OrderItemsController;
 
 // 404 page 
 //  vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views/404.blade.php
@@ -25,11 +29,20 @@ Route::prefix('v1')->group(function () {
     // Route::resource('meals', MealsController::class);
     Route::get('/meals', [MealsController::class, 'index']);
     Route::get('/meals/{id}', [MealsController::class, 'show']);
-    Route::post('/meals/create', [MealsController::class, 'store']);
+    Route::post('/meals/create', [MealsController::class, 'store'])->name('meal')->middleware('chef');
     Route::put('/meals/{id}', [MealsController::class, 'update']);
     // Route::get('/meals',);
+    // user routes
+    Route::post('/register',[UsersController::class,'register'])->name('register');
+    Route::post('/login',[UsersController::class,'login'])->name('login');
+    Route::post('/logout',[UsersController::class,'logout'])->middleware('api');
 });
 Route::prefix('v1')->group(function () {
     Route::resource('/categories', CategoriesController::class);
+    Route::resource('/reviews', ReviewsController::class);
+    Route::resource('/chefs', ChefsController::class);
+    Route::resource('/order_items', OrderItemsController::class);
+    
+
 });
 

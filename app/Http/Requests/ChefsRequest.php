@@ -11,7 +11,7 @@ class ChefsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class ChefsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'CookName' => 'required|string|min:6',
+            'Specialty'=>'required',
+            'Bio'=>'required|max:255|min:10',
+            'UserId'=>'required'
+
         ];
     }
 }
