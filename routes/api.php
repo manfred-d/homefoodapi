@@ -30,18 +30,19 @@ Route::prefix('v1')->group(function () {
     Route::get('/meals', [MealsController::class, 'index']);
     Route::get('/meals/{id}', [MealsController::class, 'show']);
     Route::post('/meals/create', [MealsController::class, 'store'])->name('meal')->middleware('chef');
-    Route::put('/meals/{id}', [MealsController::class, 'update']);
+    Route::put('/meals/{id}', [MealsController::class, 'update'])->name('meal_update')->middleware('chef');
     // Route::get('/meals',);
     // user routes
     Route::post('/register',[UsersController::class,'register'])->name('register');
     Route::post('/login',[UsersController::class,'login'])->name('login');
     Route::post('/logout',[UsersController::class,'logout'])->middleware('api');
 });
+
 Route::prefix('v1')->group(function () {
-    Route::resource('/categories', CategoriesController::class);
+    Route::resource('/categories', CategoriesController::class)->middleware('admin');
     Route::resource('/reviews', ReviewsController::class);
-    Route::resource('/chefs', ChefsController::class);
-    Route::resource('/order_items', OrderItemsController::class);
+    Route::resource('/chefs', ChefsController::class)->middleware('chef');
+    Route::resource('/order_items', OrderItemsController::class)->middleware('customer');
     
 
 });

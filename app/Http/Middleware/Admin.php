@@ -17,7 +17,7 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-             return redirect('/login');
+            return response()->json(['error' => 'Unauthorized', 'message' => 'User NOT logged in'], 401);
         };
         $user = Auth::user();
         if ($user->userType=='admin|Admin') {

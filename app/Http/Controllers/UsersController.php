@@ -35,7 +35,10 @@ class UsersController extends Controller
         // dd($request['remember_token']);
         $user = User::create($request->toArray());
         // Generate an access token for the user
-        $token = $user->createToken('AuthToken')->accessToken;
+        $token = $user->createToken('AuthToken')->plainTextToken;
+
+        // Set the token in a cookie
+        $cookie = cookie('access_token', $token, config('sanctum.lifetime'));
 
         $userResource = new UsersResource($user);
 
@@ -44,7 +47,7 @@ class UsersController extends Controller
             'user' => $userResource,
             'role'=>$user->userType,
             'access_token' => $token,
-        ]);
+        ])->withCookie($cookie);
     }
 
     /**
@@ -67,16 +70,20 @@ class UsersController extends Controller
                 $user_type = $user->userType;
 
                 // $accessToken = $user->createToken('AuthToken')->accessToken;
-                $token = $request->user()->createToken('AuthToken');
+                $token = $user->createToken('AuthToken')->accessToken;
 
                 $userResource = new UsersResource($user);
+
+                // Set the token in a cookie
+                $cookie = cookie('access_token', $token, config('session.lifetime'));
+                
 
                 return response()->json([
                     'message' => 'Login success',
                     'user' => $userResource,
                     'role'=>$user_type,
                     'access_token' => $token,
-                ]);
+                ])->withCookie($cookie);
             } else {
                 return response()->json(['error' => 'Unauthorized', 'message' => 'Invalid Credentials'], 401);
             }
@@ -92,7 +99,7 @@ class UsersController extends Controller
     {
         try {
             if (Auth::check()) {
-                $user = $request->user();
+                $user = Auth::user();
 
                 if ($user->tokens()) {
                     $user->tokens->each(function ($token) {
