@@ -9,22 +9,24 @@ use App\Http\Requests\UsersRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UsersResource;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('guest');
+    // }
 
     /**
-     * Register user.
+     * Register user.,
      */
     public function register(UsersRequest $request)
     {
-        $validator = Validator::make($request->all(), []);
+        $validator = Validator::make($request->all(),[]);
 
         if ($validator->fails()) {
             return response()->json(['error' => 'Validation failed', 'errors' => $validator->errors()], 422);
@@ -32,22 +34,22 @@ class UsersController extends Controller
 
         $request['password'] = Hash::make($request['password']);
         $request['remember_token'] = Str::random(20);
-        // dd($request['remember_token']);
+
         $user = User::create($request->toArray());
         // Generate an access token for the user
         $token = $user->createToken('AuthToken')->plainTextToken;
 
-        // Set the token in a cookie
-        $cookie = cookie('access_token', $token, config('sanctum.lifetime'));
-
         $userResource = new UsersResource($user);
+
+        event(new Registered($user));
+        Auth::login($user);
 
         return response()->json([
             'message' => 'User registered successful',
             'user' => $userResource,
             'role'=>$user->userType,
             'access_token' => $token,
-        ])->withCookie($cookie);
+        ]);
     }
 
     /**
@@ -55,66 +57,48 @@ class UsersController extends Controller
      */
     public function login(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+        $fields = $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string'
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json(['error' => 'Validation failed', 'errors' => $validator->errors()], 422);
-            }
+        // Check email
+        $user = User::where('email', $fields['email'])->first();
 
-            if (Auth::attempt($request->only('email', 'password'))) {
-                $user = Auth::user();
-                $user_type = $user->userType;
-
-                // $accessToken = $user->createToken('AuthToken')->accessToken;
-                $token = $user->createToken('AuthToken')->accessToken;
-
-                $userResource = new UsersResource($user);
-
-                // Set the token in a cookie
-                $cookie = cookie('access_token', $token, config('session.lifetime'));
-                
-
-                return response()->json([
-                    'message' => 'Login success',
-                    'user' => $userResource,
-                    'role'=>$user_type,
-                    'access_token' => $token,
-                ])->withCookie($cookie);
-            } else {
-                return response()->json(['error' => 'Unauthorized', 'message' => 'Invalid Credentials'], 401);
-            }
-        } catch (\Throwable $th) {
-            throw $th;
+        // Check password
+        if(!$user || !Hash::check($fields['password'], $user->password)) {
+            return response([
+                'message' => 'Incorrect Credentials'
+            ], 401);
         }
+
+        $response = ( [
+            'user' => $user,
+            'role' => $user->userType,
+            'token' => $user->createToken('AuthToken')->plainTextToken
+        ]);
+
+        return response($response, 200);
     }
 
     /**
      * Logout user
      */
-    public function logout(Request $request)
+    public function logout(Request $request):Response
     {
-        try {
-            if (Auth::check()) {
-                $user = Auth::user();
 
-                if ($user->tokens()) {
+            $user = $request->user();
+            if ($user) {         
+                if ($request->user()->tokens()) {
                     $user->tokens->each(function ($token) {
                         $token->delete();
                     });
                 }
-                $user->token()->revoke();
-
-                return response()->json(['message' => 'Logout successful']);
-            }
+                $request->user()->tokens()->delete();
+                return response(['message' => 'Logout successful']);
+            }else{
             return response()->json(['message'=>'User is NOT authenticated']);
-        } catch (\Throwable $th) {
-            throw $th;
-            
-        }
+            }    
 
         
     }

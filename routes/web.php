@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MealsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +13,6 @@ use App\Http\Controllers\MealsController;
 |
 */
 
-Route::get('/home', function () {
+Route::get('/', function () {
     return view('welcome');
 });
