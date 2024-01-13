@@ -36,7 +36,12 @@ class MealsController extends Controller
         try {
             //code...
             $meal = Meals::create($request->validated());
-            return (new MealsResource($meal))->response()->setStatusCode(201);
+
+            $mealResource = new MealsResource($meal);
+
+            return response()->json([
+                'meal'=> $mealResource
+            ],201);
         } catch (\Throwable $error) {
             throw $error;
             // throw new Exception("Error Processing Request", 1);

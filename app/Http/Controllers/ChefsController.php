@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Chefs;
 use Illuminate\Http\Request;
 use App\Http\Requests\ChefsRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ChefsResource;
 
 class ChefsController extends Controller
@@ -38,12 +39,13 @@ class ChefsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ChefsRequest $request,$cook_id)
+    public function store(ChefsRequest $request)
     {
         try {
-            $cook = Chefs::create($request->validated());
+            // $request['User_Id'] = Auth::user()->$id;
+            $cook = Chefs::create($request->toArray());
 
-            return (new ChefsResorce($cook))->response()->setStatusCode(201);
+            return (new ChefsResource($cook))->response()->setStatusCode(201);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -100,7 +102,7 @@ class ChefsController extends Controller
             if (!$cook) {
                 return response()->json(['message'=>'Cook not found'], 404);
             }
-            $cook->delete($request->validated());
+            $cook->delete();
 
             return (new ChefsResource($cook))->response()->setStatusCode(201);
             

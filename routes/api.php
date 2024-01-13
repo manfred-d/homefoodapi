@@ -38,9 +38,9 @@ Route::prefix('v1')->middleware(['cors','auth:sanctum'])->group(function () {
     // logout
     Route::post('/logout',[UsersController::class,'logout']);
     // resources
-    Route::resource('/categories', CategoriesController::class)->middleware('admin');
+    Route::resource('/categories', CategoriesController::class)->middleware(['admin']);
     Route::resource('/reviews', ReviewsController::class);
-    Route::resource('/chefs', ChefsController::class)->middleware('chef');
+    Route::resource('/chefs', ChefsController::class)->middleware(['chef','admin']);
     Route::resource('/order_items', OrderItemsController::class)->middleware('customer');
     
 });

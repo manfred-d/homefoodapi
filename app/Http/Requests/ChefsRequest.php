@@ -25,7 +25,7 @@ class ChefsRequest extends FormRequest
             'CookName' => 'required|string|min:6',
             'Specialty'=>'required',
             'Bio'=>'required|max:255|min:10',
-            'UserId'=>'required'
+            'User_Id'=>'required'
 
         ];
     }

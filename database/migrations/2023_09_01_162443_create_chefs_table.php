@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('CookName', 255);
             $table->text('Bio');
-            $table->string('Ratings',200);
+            $table->integer('Ratings')->unsigned()->nullable()->default(0);
             $table->string('Specialty', 255);
             $table->foreignId('User_Id')->constrained('users')->onDelete('cascade');
             $table->timestamps();

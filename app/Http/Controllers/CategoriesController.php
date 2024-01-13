@@ -7,6 +7,8 @@ use App\Models\Categories;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoriesRequest;
 use App\Http\Resources\CategoriesResource;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CategoriesController extends Controller
 {
@@ -36,7 +38,12 @@ class CategoriesController extends Controller
         try {
             //code...
             $categories = Categories::create($request->validated());
-            return (new CategoriesResource($categories))->response()->setStatusCode(201);
+            $categoryResource = new CategoriesResource($categories);
+
+            return new JsonResponse([
+                'category'=>$categoryResource
+            ],201);
+
         } catch (Throwable $error) {
             throw $error;
             // throw new Exception("Error Processing Request", 1);

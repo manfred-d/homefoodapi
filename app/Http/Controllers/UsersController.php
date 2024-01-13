@@ -64,7 +64,7 @@ class UsersController extends Controller
 
         // Check email
         $user = User::where('email', $fields['email'])->first();
-
+   
         // Check password
         if(!$user || !Hash::check($fields['password'], $user->password)) {
             return response([
@@ -75,6 +75,7 @@ class UsersController extends Controller
         $response = ( [
             'user' => $user,
             'role' => $user->userType,
+            'remember_me' =>$user->remember_token,
             'token' => $user->createToken('AuthToken')->plainTextToken
         ]);
 

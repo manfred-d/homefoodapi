@@ -17,6 +17,6 @@ class Chefs extends Model
         'Specialty',
         'Bio',
         'Ratings',
-        'UserId'
+        'User_Id'
     ];
 }
