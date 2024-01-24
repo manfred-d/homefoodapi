@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Chefs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ChefsRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ChefsResource;

@@ -48,8 +48,8 @@ class UsersController extends Controller
             'message' => 'User registered successful',
             'user' => $userResource,
             'role'=>$user->userType,
-            'access_token' => $token,
-        ]);
+            'token' => $token,
+        ],201);
     }
 
     /**
